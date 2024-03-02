@@ -7,9 +7,10 @@ import (
 	"doc-appointment/service"
 	"doc-appointment/utils"
 	"errors"
+	"log"
 )
 
-func RegisterDoctor (name, specialization string, rating int) (newDoctor models.Doctor, err error) {
+func RegisterDoctor (name, specialization string) (newDoctor models.Doctor, err error) {
 	docExists := service.IsDoctorAlreadyExists(name)
 	if docExists{
 		err = errors.New("Doctor already exists")
@@ -22,15 +23,16 @@ func RegisterDoctor (name, specialization string, rating int) (newDoctor models.
 		Rating:         constants.DeafultRating,
 	}
 	err = service.RegisterDoctor(newDoctor)
+	if err != nil {
+		log.Println(err)
+	}
+	log.Println("welcome: ", newDoctor.Name)
 	return newDoctor, err
 }
 
 func SearchAllDoctorSlotsBasedOnSpeciality(speciality string) ([]contracts.AllSlotsResponse, error) {
 
-	if utils.CheckElementExistInSlice(constants.DoctorSpecialities, speciality) {
-		return service.SearchAllDoctorSlotsBasedOnSpeciality(speciality)
-	}
-	return []contracts.AllSlotsResponse{}, nil
+	return service.SearchAllDoctorSlotsBasedOnSpeciality(speciality)
 }
 
 func CreateSlotForDoctor(docName, start, end string) error {
@@ -39,16 +41,19 @@ func CreateSlotForDoctor(docName, start, end string) error {
 		return errors.New("Doctor doesn't exists!")
 	}
 
-	slot := utils.GetTimeSlot(start, end string)
+	slot, err := utils.GetTimeSlot(start, end)
+	if err != nil {
+		return err
+	}
 
-	err = service.CreateSlotForDoctor(docName, startTime, endTime)
+	err = service.CreateSlotForDoctor(docName, slot)
 	return err
 }
 
-func AllBookedAppointmentsForDoctor (docName string) ([]models.Slot, error) {
+func AllBookedAppointmentsForDoctor (docName string) ([]int, error) {
 	if !service.IsDoctorAlreadyExists(docName) {
 		// need specialization of doctor here if want to register
-		return []models.Slot{}, errors.New("Doctor doesn't exists!")
+		return []int{}, errors.New("Doctor doesn't exists!")
 	}
 	return service.SearchAllBookedAppointmentsForDoctor(docName)
 }

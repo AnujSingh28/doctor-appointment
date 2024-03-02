@@ -1,27 +1,28 @@
 package controller
 
 import (
-	"doc-appointment/constants"
 	"doc-appointment/models"
-	"time"
+	"doc-appointment/service"
+	"doc-appointment/utils"
 )
 
-func CreateBookingByDocName(docName, patientName, startTime, endTime string) {
+func CreateBookingByDocName(docName, patientName, startTime, endTime string) (models.Booking, error){
+	reqSlot, err := utils.GetTimeSlot(startTime, endTime)
+	if err != nil {
+		return models.Booking{}, err
+	}
+	return service.CreateBookingByDocName(docName, patientName, reqSlot)
 
 }
 
-func CreateBookingBySpecialization(specialization, patientName, startTime, endTime string) {
+//func CreateBookingBySpecialization(specialization, patientName, startTime, endTime string) (models.Booking, error) {
+//	reqSlot, err := utils.GetTimeSlot(startTime, endTime)
+//	if err != nil {
+//		return models.Booking{}, err
+//	}
+//	return service.CreateBookingBySpecialization(specialization, patientName, reqSlot)
+//}
 
-}
-
-func CancelBooking() {
-
-}
-
-func BookFromWaitlist() {
-
-}
-
-func GenerateSlot(start time.Time, duration int) models.Slot {
-	return models.Slot{Start: start, End: start.Add(time.Minute * constants.Duration)}
-}
+//func CancelBooking() {
+//
+//}

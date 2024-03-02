@@ -1,7 +1,5 @@
 package contracts
 
-import "doc-appointment/models"
-
 type RegisterDoctor struct {
 	Name string `json:"name"`
 	Specialization string `json:"specialization"`
@@ -10,5 +8,5 @@ type RegisterDoctor struct {
 
 type AllSlotsResponse struct {
 	Name string `json:"name"`
-	Slots []models.Slot `json:"slots"`
+	Slots []int `json:"slots"`
 }

@@ -4,7 +4,6 @@ import (
 	"doc-appointment/models"
 	"doc-appointment/service"
 	"errors"
-	"github.com/google/uuid"
 )
 
 func RegisterPatient (name string) (err error ){
@@ -15,7 +14,6 @@ func RegisterPatient (name string) (err error ){
 	}
 
 	newPatient := models.Patient{
-		Id:             uuid.New(),
 		Name:           name,
 	}
 	err = service.RegisterPatient(newPatient)
