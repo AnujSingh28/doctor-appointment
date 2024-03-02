@@ -34,11 +34,20 @@ func GetTimeSlot(startTime, endTime string) (int, error) {
 	startRange, _ := time.Parse(timeFormat, "9:00am")
 	endRange, _ := time.Parse(timeFormat, "9:00pm")
 
+	// Standard checks
+	if end.Sub(start) != 30*time.Minute {
+		return 0, fmt.Errorf("the difference between start and end time should be exactly 30 minutes")
+	}
+
+	if start.Minute()%30 != 0 || end.Minute()%30 != 0 {
+		return 0, fmt.Errorf("start time and end time must be aligned with 30-minute intervals")
+	}
+
 	if start.Before(startRange) || end.After(endRange) {
 		return 0, fmt.Errorf("time should be in range 9am to 9pm")
 	}
 
-	slotDuration := 30*time.Minute
+	slotDuration := 30 * time.Minute
 	currentTime := start
 	slotCount := 0
 
@@ -52,12 +61,12 @@ func GetTimeSlot(startTime, endTime string) (int, error) {
 	return slotCount, nil
 }
 
-func GetStartAndEndFromSlot (slotNumber int) (string, string, error) {
+func GetStartAndEndFromSlot(slotNumber int) (string, string, error) {
 	timeFormat := "3:04pm"
 	startRange, _ := time.Parse(timeFormat, "9:00am")
-	slotDuration := 30*time.Minute
+	slotDuration := 30 * time.Minute
 
-	startTime := startRange.Add(time.Duration(slotNumber)*slotDuration)
+	startTime := startRange.Add(time.Duration(slotNumber) * slotDuration)
 
 	if startTime.Before(startRange) || startTime.After(startRange.Add(12*time.Hour)) {
 		return "", "", fmt.Errorf("invalid slot number")
