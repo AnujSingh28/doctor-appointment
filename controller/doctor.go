@@ -7,24 +7,22 @@ import (
 	"doc-appointment/service"
 	"doc-appointment/utils"
 	"errors"
-	"github.com/google/uuid"
 )
 
-func RegisterDoctor (name, specialization string, rating int) (err error) {
+func RegisterDoctor (name, specialization string, rating int) (newDoctor models.Doctor, err error) {
 	docExists := service.IsDoctorAlreadyExists(name)
 	if docExists{
 		err = errors.New("Doctor already exists")
 		return
 	}
 
-	newDoctor := models.Doctor{
-		Id:             uuid.New(),
+	newDoctor = models.Doctor{
 		Name:           name,
 		Specialization: specialization,
-		Rating:         rating,
+		Rating:         constants.DeafultRating,
 	}
 	err = service.RegisterDoctor(newDoctor)
-	return err
+	return newDoctor, err
 }
 
 func SearchAllDoctorSlotsBasedOnSpeciality(speciality string) ([]contracts.AllSlotsResponse, error) {
@@ -40,14 +38,8 @@ func CreateSlotForDoctor(docName, start, end string) error {
 		// need specialization of doctor here if want to register
 		return errors.New("Doctor doesn't exists!")
 	}
-	startTime, err := utils.ParseTime(start)
-	if err != nil {
-		return err
-	}
-	endTime, err := utils.ParseTime(start)
-	if err != nil {
-		return err
-	}
+
+	slot := utils.GetTimeSlot(start, end string)
 
 	err = service.CreateSlotForDoctor(docName, startTime, endTime)
 	return err

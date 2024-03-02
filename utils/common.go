@@ -18,3 +18,7 @@ func CheckElementExistInSlice(slice []string, element string) bool {
 	}
 	return false
 }
+
+func GetTimeSlot() {
+
+}

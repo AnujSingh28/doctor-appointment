@@ -23,41 +23,25 @@ func IsDoctorAlreadyExists(name string) bool {
 
 func RegisterDoctor(newDoc models.Doctor) error {
 	AllDoctors[newDoc.Name] = newDoc
-	log.Println(AllDoctors)
 	return nil
 }
 
-func CreateSlotForDoctor(docName string, start, end time.Time) error {
+func CreateSlotForDoctor(docName string, slot int) error {
 
 	if _, ok := AvailableDoctorsAndSlots[docName]; ok {
 		// check if slot already exist else push
 		reqDoctorStruct := AvailableDoctorsAndSlots[docName]
-		reqDoctorStruct.Slots = append(reqDoctorStruct.Slots, models.Slot{
-			Start: start,
-			End:   end,
-		})
+		reqDoctorStruct.Slots = append(reqDoctorStruct.Slots, slot)
 
 	}
 	newSlotForDoc := models.AvailableDoctor{
-		DoctorId: AllDoctors[docName].Id,
-		Slots: []models.Slot{{
-			Start: start,
-			End:   end,
-		}},
+		DocName: docName,
+		Slots: []int{slot},
 	}
 	AvailableDoctorsAndSlots[docName] = newSlotForDoc
 	return nil
 }
 
-func GetDoctorById (id uuid.UUID) (models.Doctor, error) {
-	var doctor models.Doctor
-	for _, doctor = range AllDoctors {
-		if doctor.Id == id {
-			return doctor, nil
-		}
-	}
-	return doctor, errors.New("Doctor doesn't exists")
-}
 
 func SearchAllDoctorSlotsBasedOnSpeciality(speciality string) ([]contracts.AllSlotsResponse, error) {
 

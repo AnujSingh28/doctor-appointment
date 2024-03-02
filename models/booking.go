@@ -1,10 +1,8 @@
 package models
 
-import "github.com/google/uuid"
-
-type Booking struct {
-	DcotorId uuid.UUID `json:"dcotor_id"`
-	PatientId uuid.UUID `json:"patient_id"`
-	Slot Slot `json:"slot"`
+type Booking struct{
+	DoctorName string `json:"doc_name"`
+	PatientName string `json:"patient_name"`
+	Slot int `json:"slot"`
 	Waitlist bool `json:"waitlist"`
 }
