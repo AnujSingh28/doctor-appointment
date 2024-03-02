@@ -47,17 +47,7 @@ func GetTimeSlot(startTime, endTime string) (int, error) {
 		return 0, fmt.Errorf("time should be in range 9am to 9pm")
 	}
 
-	slotDuration := 30 * time.Minute
-	currentTime := start
-	slotCount := 0
-
-	for currentTime.Before(end) {
-		if currentTime.After(startRange) && currentTime.Before(endRange) {
-			slotCount++
-		}
-		currentTime = currentTime.Add(slotDuration)
-
-	}
+	slotCount := int(start.Sub(startRange).Minutes() / 30)
 	return slotCount, nil
 }
 
