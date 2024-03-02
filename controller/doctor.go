@@ -42,6 +42,7 @@ func CreateSlotForDoctor(docName, start, end string) error {
 	}
 
 	slot, err := utils.GetTimeSlot(start, end)
+	log.Println("-----", slot)
 	if err != nil {
 		return err
 	}
