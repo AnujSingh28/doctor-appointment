@@ -5,6 +5,7 @@ import (
 	"doc-appointment/utils"
 	"errors"
 	"log"
+	"sort"
 )
 
 var (
@@ -21,7 +22,7 @@ func IsSlotAlreadyBooked(slot int) bool {
 
 func CreateBookingByDocName(docName, patientName string, slot int) (models.Booking, error) {
 	if !IsSLotAlreadyCreated(slot) {
-		errors.New("This slot is not made available by any doctor")
+		errors.New("This slot is not made available by any doctor ")
 	}
 
 	newBooking := models.Booking{
@@ -47,9 +48,24 @@ func CreateBookingByDocName(docName, patientName string, slot int) (models.Booki
 	return models.Booking{}, errors.New("no doctor slots available ")
 }
 
-//func CreateBookingBySpecialization (speciality, patientName string, slot int) (models.Booking, error) {
-//	docName, allSlots := SearchAllDoctorSlotsBasedOnSpeciality(speciality)
-//}
+func CreateBookingBySpecialization (speciality, patientName string, slot int) (models.Booking, error) {
+	docs, err := SearchAllDoctorSlotsBasedOnSpeciality(speciality)
+	if err != nil {
+		return models.Booking{}, err
+	}
+
+	var allSlots []int
+
+	for _, doc := range docs {
+		allSlots = append(allSlots, doc.Slots...)
+	}
+
+	sort.Slice(allSlots, func(i, j int) bool {
+		return allSlots[i] < allSlots[j]
+	})
+
+	return models.Booking{}, nil
+}
 
 func CancelBookingByPatient(docName, patientName string, slot int) error {
 	if !IsSlotAlreadyBooked(slot) {

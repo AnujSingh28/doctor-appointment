@@ -4,11 +4,12 @@ import (
 	"doc-appointment/contracts"
 	"doc-appointment/models"
 	"errors"
+	"log"
 )
 
 var (
-	AllDoctors = map[string]models.Doctor{}
-	AvailableDoctorsAndSlots = map[string]models.AvailableDoctor{}
+	AllDoctors = map[string]models.Doctor{} // name _> model.doctor
+	AvailableDoctorsAndSlots = map[string]models.AvailableDoctor{} // drname -> {name, slots []int}
 	AllAvailableSlots        = map[int]bool{}
 )
 
@@ -43,15 +44,21 @@ func CreateSlotForDoctor(docName string, slot int) error {
 
 	if _, ok := AvailableDoctorsAndSlots[docName]; ok {
 		// check if slot already exist else push
+		log.Println("-----------------")
 		reqDoctorStruct := AvailableDoctorsAndSlots[docName]
-		reqDoctorStruct.Slots = append(reqDoctorStruct.Slots, slot)
+		docSlots := reqDoctorStruct.Slots
+		docSlots = append(docSlots, slot)
+		reqDoctorStruct.Slots = docSlots
+		AvailableDoctorsAndSlots[docName] = reqDoctorStruct
+	} else {
+		newSlotForDoc := models.AvailableDoctor{
+			DocName: docName,
+			Slots: []int{slot},
+		}
+		AvailableDoctorsAndSlots[docName] = newSlotForDoc
 	}
 
-	newSlotForDoc := models.AvailableDoctor{
-		DocName: docName,
-		Slots: []int{slot},
-	}
-	AvailableDoctorsAndSlots[docName] = newSlotForDoc
+
 	AllAvailableSlots[slot] = true
 	return nil
 }

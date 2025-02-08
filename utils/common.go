@@ -20,6 +20,8 @@ func CheckElementExistInSlice(slice []int, element int) bool {
 	return false
 }
 
+// 9:00am - 9:00pm 9am to 9.30am -> 0
+
 func GetTimeSlot(startTime, endTime string) (int, error) {
 	timeFormat := "3:04pm"
 	start, err := time.Parse(timeFormat, startTime)
